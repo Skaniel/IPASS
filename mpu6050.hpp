@@ -7,8 +7,17 @@
 #ifndef V1OOPC_EXAMPLES_MPU6050_HPP
 #define V1OOPC_EXAMPLES_MPU6050_HPP
 
+//doxygen mainpage:
+///\mainpage
+///This library is made for interfacing with the mpu6050
+///\image html mpu6050_img.jpg
+
+
 #include <hwlib.hpp>
 #include "Class_xyz.hpp"
+
+//for all registers see register map at:
+//https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
 
 //defines for the registers addresses
 #define MPU_ADDRESS 0x68
@@ -21,15 +30,17 @@
 #define NUMB_SENSOR_REGS 14
 
 //defines for register data
-#define FS_SEL 0x01
-#define AFS_SEL 0x02
+#define FS_SEL 0x08
+#define AFS_SEL 0x10
 #define CLKSEL 0x02
 
 //needed for coversion from radians to degrees (1 rad = 57.295779513 deg)
 #define RAD_TO_DEG 57.295779513
 
-const int16_t readings = 200;
+#define samples 7
 
+///\brief
+///Namespace for the MPU-6050 gravitation module
 namespace mpulibrary {
 ///\brief
 ///Library for the MPU-6050 gravitation module
@@ -44,16 +55,17 @@ namespace mpulibrary {
         xyz xyz_accel_raw{0, 0, 0};
         xyz xyz_gyro_raw{0, 0, 0};
 
-        xyz xyz_gyro{0, 0, 0};
-        xyz xyz_accel{0, 0, 0};
-
         xyz xyz_gyro_avg{0, 0, 0};
         xyz xyz_accel_avg{0, 0, 0};
+
+        //arrays for holding raw sensor values for all sensors (only using accelerometer data for angle)
+        int16_t smooth_accel_x[samples];
+        int16_t smooth_accel_y[samples];
+        int16_t smooth_accel_z[samples];
 
         int16_t temp_raw = 0;
         int16_t temperature = 0;
         double angle = 0.0;
-
 
         /// \brief
         /// Reads sensor data
@@ -63,10 +75,19 @@ namespace mpulibrary {
         void read_regs();
 
         /// \brief
-        /// Calculate average
+        /// Filters raw sensor data
         /// \details
-        /// This function calculates an average over n readers
-        void average();
+        /// This function filters raw data by using a rolling array, new data is added to the back of the array.
+        /// Then the data is sorted and the average is returned
+        /// \warning
+        /// This function needs a array for each sensor
+        int16_t smoothData(int16_t rawData, int16_t *sensorArray);
+
+        /// \brief
+        /// Calculates the angle
+        /// \details
+        /// This function calculates the angle from the 3 accelerometer axis
+        void calculate_angle();
 
         /// \brief
         /// Write to i2c bus
@@ -79,13 +100,13 @@ namespace mpulibrary {
         /// Constructor
         /// \details
         ///This is the constructor for the MPU6050
-        explicit mpu_6050(hwlib::i2c_bus &bus) : bus(bus) {}
+        mpu_6050(hwlib::i2c_bus &bus) : bus(bus) {}
 
         /// \brief
         /// Initialize MPU6050
         /// \details
-        ///This function gets the MPU out of sleep mode and sets the accelerometer sensitivity
-        void init();
+        ///This function gets the MPU out of sleep mode and sets the accelerometer and gyroscope sensitivity
+        void initialize();
 
         /// \brief
         /// Update angle and average
@@ -94,16 +115,18 @@ namespace mpulibrary {
         void update();
 
         /// \brief
-        /// Calculate and return angle
+        /// Returns angle
         /// \details
-        /// This function calculates and returns the angle
-        double get_angle() ;
+        /// This function returns the angle
+        [[nodiscard]] double get_angle() const {
+            return angle;
+        }
 
         /// \brief
         /// Return temperature
         /// \details
         /// This function returns the temperature of the onboard sensor
-        int16_t get_Temp() const {
+        [[nodiscard]] int16_t get_Temp() const {
             return temperature;
         }
 
@@ -111,7 +134,7 @@ namespace mpulibrary {
         /// Return X axis accelerometer
         /// \details
         /// This function returns the average of X axis accelerometer
-        int16_t get_X_Accel() const {
+        [[nodiscard]] int16_t get_X_Accel() const {
             return xyz_accel_avg.x;
         }
 
@@ -119,7 +142,7 @@ namespace mpulibrary {
         /// Return Y axis accelerometer
         /// \details
         /// This function returns the average of Y axis accelerometer
-        int16_t get_Y_Accel() const {
+        [[nodiscard]] int16_t get_Y_Accel() const {
             return xyz_accel_avg.y;
         }
 
@@ -127,7 +150,7 @@ namespace mpulibrary {
         /// Return Z axis accelerometer
         /// \details
         /// This function returns the average of Z axis accelerometer
-        int16_t get_Z_Accel() const {
+        [[nodiscard]] int16_t get_Z_Accel() const {
             return xyz_accel_avg.z;
         }
 
@@ -135,7 +158,7 @@ namespace mpulibrary {
         /// Return X axis gyroscope
         /// \details
         /// This function returns the average of X axis gyroscope
-        int16_t get_X_Gyro() const {
+        [[nodiscard]] int16_t get_X_Gyro() const {
             return xyz_gyro_avg.x;
         }
 
@@ -143,7 +166,7 @@ namespace mpulibrary {
         /// Return Y axis gyroscope
         /// \details
         /// This function returns the average of Y axis gyroscope
-        int16_t get_Y_Gyro() const {
+        [[nodiscard]] int16_t get_Y_Gyro() const {
             return xyz_gyro_avg.y;
         }
 
@@ -151,18 +174,9 @@ namespace mpulibrary {
         /// Return Z axis gyroscope
         /// \details
         /// This function returns the average of Z axis gyroscope
-        int16_t get_Z_Gyro() const {
+        [[nodiscard]] int16_t get_Z_Gyro() const {
             return xyz_gyro_avg.z;
         }
-
-        /// \brief
-        /// NOT USED????
-        /// \details
-        ///
-        int32_t map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max) {
-            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-        }
-
     }; //Class
 } //Namespace
 

@@ -7,11 +7,14 @@
 #include "mpu6050.hpp"
 
 void mpulibrary::mpu_6050::update() {
-    average();
-    get_angle();
+    read_regs();
+    xyz_accel_avg.x = smoothData(xyz_accel_raw.x, smooth_accel_x);
+    xyz_accel_avg.z = smoothData(xyz_accel_raw.y, smooth_accel_y);
+    xyz_accel_avg.y = smoothData(xyz_accel_raw.z, smooth_accel_z);
+    calculate_angle();
 }
 
-void mpulibrary::mpu_6050::init() {
+void mpulibrary::mpu_6050::initialize() {
     // default at power-up:
     //    Gyro at 250 degrees second
     //    Acceleration at 2g
@@ -28,23 +31,40 @@ void mpulibrary::mpu_6050::init() {
     i2c_write(GYRO_CONFIG, FS_SEL);
 }
 
-void mpulibrary::mpu_6050::average() {
-    //reset accel and gyro
-    xyz_accel = 0;
-    xyz_gyro = 0;
+int16_t mpulibrary::mpu_6050::smoothData(int16_t rawData, int16_t *sensorArray) {
+    int16_t j, k, temp, top, bottom, total;
+    static int16_t i;
+    static int16_t sorted[samples];
+    bool done;
 
-    read_regs();
-    for (int16_t i = 0; i < readings; i++) {
-        read_regs();
-        //Uses custom operator in xyz class
-        xyz_accel += xyz_accel_raw;
-        xyz_gyro += xyz_gyro_avg;
-        hwlib::wait_ms(2);
+    i = (i + 1) % samples;    //increment counter and roll over
+    sensorArray[i] = rawData;   //input new data into the oldest slot
+
+    for (j = 0; j < samples; j++) {     //Transfer data in new array for sorting and averaging
+        sorted[j] = sensorArray[j];
     }
-
-    //Uses custom operator in xyz class
-    xyz_accel_avg = xyz_accel / readings;
-    xyz_gyro_avg = xyz_gyro / readings;
+    done = false;
+    while (done != 1) { //Swap sort, sorts numbers from lowest to highest
+        done = true;
+        for (j = 0; j < (samples - 1); j++) {
+            if (sorted[j] > sorted[j + 1]) {     //If numbers are not sorted - swap them
+                temp = sorted[j + 1];
+                sorted[j + 1] = sorted[j];
+                sorted[j] = temp;
+                done = false;
+            }
+        }
+    }
+    //delete the top and bottom 15% of samples
+    bottom = fmax(((samples * 15) / 100), 1);
+    top = fmin((((samples * 85) / 100) + 1), (samples - 1));
+    k = 0;
+    total = 0;
+    for (j = bottom; j < top; j++) {
+        total += sorted[j];  // total remaining indices
+        k++;
+    }
+    return total / k;    //Divide by total number of samples minus top and bottom
 
 }
 
@@ -81,8 +101,8 @@ void mpulibrary::mpu_6050::i2c_write(uint8_t reg, uint8_t data) {
     wtrans.~i2c_write_transaction();
 }
 
-double mpulibrary::mpu_6050::get_angle() {
-    angle = atan2(-xyz_accel.x, xyz_accel.z); //calculate the angle from the x and y axis
-    return angle * RAD_TO_DEG; //atan2 returns radians so convert radians to degrees
-
+void mpulibrary::mpu_6050::calculate_angle() {
+//calculate the angle from the x,y and z axis
+    angle = atan2(xyz_accel_avg.y, sqrt(pow(xyz_accel_avg.x, 2) + pow(xyz_accel_avg.z, 2)));
+    angle *= RAD_TO_DEG; //atan2 returns radians so convert radians to degrees
 }
