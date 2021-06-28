@@ -1,9 +1,10 @@
 # IPASS
 IPASS Project Hogeschool Utrecht
 
-For the documentation: run
-
+For the documentation: run:
+```
    doxygen doxyfiles/doxyfile
+```
 and open index.html.
 
 
