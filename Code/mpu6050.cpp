@@ -9,11 +9,17 @@
 void mpulibrary::mpu_6050::update() {
     //read sensor raw data
     read_regs();
-    //smooth ray sensor data from the accelerometer
+    //smooth sensor data from the accelerometer
     xyz_accel_avg.x = smoothData(xyz_accel_raw.x, smooth_accel_x);
     xyz_accel_avg.y = smoothData(xyz_accel_raw.y, smooth_accel_y);
     xyz_accel_avg.z = smoothData(xyz_accel_raw.z, smooth_accel_z);
-    //calculate angle from x y and z data
+
+    //smooth sensor data from the gyroscope
+    xyz_gyro_avg.x = smoothData(xyz_gyro_raw.x, smooth_gyro_x);
+    xyz_gyro_avg.y = smoothData(xyz_gyro_raw.y, smooth_gyro_y);
+    xyz_gyro_avg.z = smoothData(xyz_gyro_raw.z, smooth_gyro_z);
+
+    //calculate angle from x y and z accelerometer data
     calculate_angle();
 }
 
@@ -58,7 +64,7 @@ int16_t mpulibrary::mpu_6050::smoothData(int16_t rawData, int16_t *sensorArray) 
             }
         }
     }
-    //delete the top and bottom 15% of samples
+    //delete the top and bottom 15% of samples (for huge variations)
     bottom = fmax(((samples * 15) / 100), 1);
     top = fmin((((samples * 85) / 100) + 1), (samples - 1));
     k = 0;
@@ -106,8 +112,8 @@ void mpulibrary::mpu_6050::i2c_write(uint8_t reg, uint8_t data) {
 
 void mpulibrary::mpu_6050::calculate_angle() {
     //calculate the angle from the x,y and z axis
+    //Formula used: https://www.nxp.com/files-static/sensors/doc/app_note/AN3461.pdf
     angle = atan2(xyz_accel_avg.z, sqrt(pow(xyz_accel_avg.x, 2) + pow(xyz_accel_avg.y, 2)));
-    //Formula used:
     //atan2 returns radians so convert radians to degrees
     angle *= RAD_TO_DEG;
 }

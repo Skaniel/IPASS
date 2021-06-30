@@ -102,8 +102,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae3c4d5e57888e8fe2e1d69e7783d1bf6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpulibrary_1_1mpu__6050.html#ae3c4d5e57888e8fe2e1d69e7783d1bf6">initialize</a> ()</td></tr>
 <tr class="memdesc:ae3c4d5e57888e8fe2e1d69e7783d1bf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize MPU6050.  <a href="classmpulibrary_1_1mpu__6050.html#ae3c4d5e57888e8fe2e1d69e7783d1bf6">More...</a><br /></td></tr>
 <tr class="separator:ae3c4d5e57888e8fe2e1d69e7783d1bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80006fe0c4e585aa0e787b651072707c"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpulibrary_1_1mpu__6050.html#a80006fe0c4e585aa0e787b651072707c">smoothData</a> (int16_t rawData, int16_t *sensorArray)</td></tr>
+<tr class="memdesc:a80006fe0c4e585aa0e787b651072707c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filters raw sensor data.  <a href="classmpulibrary_1_1mpu__6050.html#a80006fe0c4e585aa0e787b651072707c">More...</a><br /></td></tr>
+<tr class="separator:a80006fe0c4e585aa0e787b651072707c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac94b11491b76af052d52b7d9d4e58c39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpulibrary_1_1mpu__6050.html#ac94b11491b76af052d52b7d9d4e58c39">update</a> ()</td></tr>
-<tr class="memdesc:ac94b11491b76af052d52b7d9d4e58c39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update angle and average.  <a href="classmpulibrary_1_1mpu__6050.html#ac94b11491b76af052d52b7d9d4e58c39">More...</a><br /></td></tr>
+<tr class="memdesc:ac94b11491b76af052d52b7d9d4e58c39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update angle and average from sensors.  <a href="classmpulibrary_1_1mpu__6050.html#ac94b11491b76af052d52b7d9d4e58c39">More...</a><br /></td></tr>
 <tr class="separator:ac94b11491b76af052d52b7d9d4e58c39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1e434cde0514b5ed3e28278a4cd8e99"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpulibrary_1_1mpu__6050.html#af1e434cde0514b5ed3e28278a4cd8e99">get_angle</a> () const</td></tr>
 <tr class="memdesc:af1e434cde0514b5ed3e28278a4cd8e99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns angle.  <a href="classmpulibrary_1_1mpu__6050.html#af1e434cde0514b5ed3e28278a4cd8e99">More...</a><br /></td></tr>
@@ -408,6 +411,37 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a80006fe0c4e585aa0e787b651072707c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80006fe0c4e585aa0e787b651072707c">&#9670;&nbsp;</a></span>smoothData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t mpulibrary::mpu_6050::smoothData </td>
+          <td>(</td>
+          <td class="paramtype">int16_t&#160;</td>
+          <td class="paramname"><em>rawData</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int16_t *&#160;</td>
+          <td class="paramname"><em>sensorArray</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Filters raw sensor data. </p>
+<p>This function filters raw data by using a rolling array, new data is added to the back of the array. Then the data is sorted and the average is returned </p><dl class="section warning"><dt>Warning</dt><dd>This function needs a array for each sensor </dd></dl>
+
+</div>
+</div>
 <a id="ac94b11491b76af052d52b7d9d4e58c39"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac94b11491b76af052d52b7d9d4e58c39">&#9670;&nbsp;</a></span>update()</h2>
 
@@ -423,8 +457,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Update angle and average. </p>
-<p>This function calls to update the average and the angle </p>
+<p>Update angle and average from sensors. </p>
+<p>This function calls to update the average of the sensor and to calculate the angle from the accelerometer </p>
 
 </div>
 </div>

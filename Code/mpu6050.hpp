@@ -11,6 +11,9 @@
 ///\mainpage
 ///This library is made for interfacing with the mpu6050
 ///\image html mpu6050_img.jpg
+/// \author Daniël Hoegee
+/// \version 1 (last modified 30-06-2021)
+/// \copyright Boost license
 
 
 #include <hwlib.hpp>
@@ -34,7 +37,7 @@
 #define AFS_SEL 0x10
 #define CLKSEL 0x02
 
-//needed for coversion from radians to degrees (1 rad = 57.295779513 deg)
+//needed for conversion from radians to degrees (1 rad = 57.295779513 deg)
 #define RAD_TO_DEG 57.295779513
 
 #define samples 7
@@ -63,6 +66,10 @@ namespace mpulibrary {
         int16_t smooth_accel_y[samples];
         int16_t smooth_accel_z[samples];
 
+        int16_t smooth_gyro_x[samples];
+        int16_t smooth_gyro_y[samples];
+        int16_t smooth_gyro_z[samples];
+
         int16_t temp_raw = 0;
         int16_t temperature = 0;
         double angle = 0.0;
@@ -73,15 +80,6 @@ namespace mpulibrary {
         ///This function reads the registers of the mpu where the sensor values are stored
         /// register 3B/ 49
         void read_regs();
-
-        /// \brief
-        /// Filters raw sensor data
-        /// \details
-        /// This function filters raw data by using a rolling array, new data is added to the back of the array.
-        /// Then the data is sorted and the average is returned
-        /// \warning
-        /// This function needs a array for each sensor
-        int16_t smoothData(int16_t rawData, int16_t *sensorArray);
 
         /// \brief
         /// Calculates the angle
@@ -109,9 +107,18 @@ namespace mpulibrary {
         void initialize();
 
         /// \brief
-        /// Update angle and average
+        /// Filters raw sensor data
         /// \details
-        /// This function calls to update the average and the angle
+        /// This function filters raw data by using a rolling array, new data is added to the back of the array.
+        /// Then the data is sorted and the average is returned
+        /// \warning
+        /// This function needs a array for each sensor
+        int16_t smoothData(int16_t rawData, int16_t *sensorArray);
+
+        /// \brief
+        /// Update angle and average from sensors
+        /// \details
+        /// This function calls to update the average of the sensor and to calculate the angle from the accelerometer
         void update();
 
         /// \brief

@@ -16,8 +16,10 @@ Library for the MPU-\/6050 gravitation module.
 \begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classmpulibrary_1_1mpu__6050_ae3c4d5e57888e8fe2e1d69e7783d1bf6}{initialize}} ()
 \begin{DoxyCompactList}\small\item\em Initialize MPU6050. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{classmpulibrary_1_1mpu__6050_a80006fe0c4e585aa0e787b651072707c}{smooth\+Data}} (int16\+\_\+t raw\+Data, int16\+\_\+t $\ast$sensor\+Array)
+\begin{DoxyCompactList}\small\item\em Filters raw sensor data. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classmpulibrary_1_1mpu__6050_ac94b11491b76af052d52b7d9d4e58c39}{update}} ()
-\begin{DoxyCompactList}\small\item\em Update angle and average. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Update angle and average from sensors. \end{DoxyCompactList}\item 
 double \mbox{\hyperlink{classmpulibrary_1_1mpu__6050_af1e434cde0514b5ed3e28278a4cd8e99}{get\+\_\+angle}} () const
 \begin{DoxyCompactList}\small\item\em Returns angle. \end{DoxyCompactList}\item 
 int16\+\_\+t \mbox{\hyperlink{classmpulibrary_1_1mpu__6050_a21aec9629ef55dcaf7821ef3e23c303b}{get\+\_\+\+Temp}} () const
@@ -145,7 +147,20 @@ This function returns the average of Z axis gyroscope \mbox{\Hypertarget{classmp
 
 Initialize MPU6050. 
 
-This function gets the MPU out of sleep mode and sets the accelerometer and gyroscope sensitivity \mbox{\Hypertarget{classmpulibrary_1_1mpu__6050_ac94b11491b76af052d52b7d9d4e58c39}\label{classmpulibrary_1_1mpu__6050_ac94b11491b76af052d52b7d9d4e58c39}} 
+This function gets the MPU out of sleep mode and sets the accelerometer and gyroscope sensitivity \mbox{\Hypertarget{classmpulibrary_1_1mpu__6050_a80006fe0c4e585aa0e787b651072707c}\label{classmpulibrary_1_1mpu__6050_a80006fe0c4e585aa0e787b651072707c}} 
+\index{mpulibrary::mpu\_6050@{mpulibrary::mpu\_6050}!smoothData@{smoothData}}
+\index{smoothData@{smoothData}!mpulibrary::mpu\_6050@{mpulibrary::mpu\_6050}}
+\doxysubsubsection{\texorpdfstring{smoothData()}{smoothData()}}
+{\footnotesize\ttfamily int16\+\_\+t mpulibrary\+::mpu\+\_\+6050\+::smooth\+Data (\begin{DoxyParamCaption}\item[{int16\+\_\+t}]{raw\+Data,  }\item[{int16\+\_\+t $\ast$}]{sensor\+Array }\end{DoxyParamCaption})}
+
+
+
+Filters raw sensor data. 
+
+This function filters raw data by using a rolling array, new data is added to the back of the array. Then the data is sorted and the average is returned \begin{DoxyWarning}{Warning}
+This function needs a array for each sensor 
+\end{DoxyWarning}
+\mbox{\Hypertarget{classmpulibrary_1_1mpu__6050_ac94b11491b76af052d52b7d9d4e58c39}\label{classmpulibrary_1_1mpu__6050_ac94b11491b76af052d52b7d9d4e58c39}} 
 \index{mpulibrary::mpu\_6050@{mpulibrary::mpu\_6050}!update@{update}}
 \index{update@{update}!mpulibrary::mpu\_6050@{mpulibrary::mpu\_6050}}
 \doxysubsubsection{\texorpdfstring{update()}{update()}}
@@ -153,9 +168,9 @@ This function gets the MPU out of sleep mode and sets the accelerometer and gyro
 
 
 
-Update angle and average. 
+Update angle and average from sensors. 
 
-This function calls to update the average and the angle 
+This function calls to update the average of the sensor and to calculate the angle from the accelerometer 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

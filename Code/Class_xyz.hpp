@@ -8,9 +8,9 @@
 #define V1OOPC_EXAMPLES_CLASS_XYZ_HPP
 
 ///\brief
-/// Class to easily store the xyz values
+/// Class to easily store xyz values
 ///\details
-/// This class stores the xyz values and has a couple of custom operators
+/// This class stores xyz values and has a couple of custom operators
 class xyz {
 public:
     int16_t x;

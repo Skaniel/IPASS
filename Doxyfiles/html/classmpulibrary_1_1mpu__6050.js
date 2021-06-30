@@ -10,5 +10,6 @@ var classmpulibrary_1_1mpu__6050 =
     [ "get_Z_Accel", "classmpulibrary_1_1mpu__6050.html#af164b87355a6da5eff6563cf9d0f0037", null ],
     [ "get_Z_Gyro", "classmpulibrary_1_1mpu__6050.html#a4a3ae1b30a1d1c6d727bb38a155fc53b", null ],
     [ "initialize", "classmpulibrary_1_1mpu__6050.html#ae3c4d5e57888e8fe2e1d69e7783d1bf6", null ],
+    [ "smoothData", "classmpulibrary_1_1mpu__6050.html#a80006fe0c4e585aa0e787b651072707c", null ],
     [ "update", "classmpulibrary_1_1mpu__6050.html#ac94b11491b76af052d52b7d9d4e58c39", null ]
 ];
